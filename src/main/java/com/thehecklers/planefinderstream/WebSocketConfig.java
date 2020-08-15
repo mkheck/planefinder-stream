@@ -1,10 +1,10 @@
 package com.thehecklers.planefinderstream;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.socket.config.annotation.*;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+//import org.springframework.scheduling.annotation.EnableScheduling;
+//import org.springframework.scheduling.annotation.Scheduled;
+//import org.springframework.web.socket.config.annotation.*;
 
 //@EnableWebSocketMessageBroker
 //public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
@@ -24,6 +24,8 @@ import org.springframework.web.socket.config.annotation.*;
 
 //@Configuration
 //@EnableWebSocket
+public class WebSocketConfig {
+/*
 public class WebSocketConfig implements WebSocketConfigurer {
     private final WebSocketHandler handler;
 
@@ -35,4 +37,5 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(handler, "/aircraftstream").setAllowedOrigins("*");
     }
+*/
 }
