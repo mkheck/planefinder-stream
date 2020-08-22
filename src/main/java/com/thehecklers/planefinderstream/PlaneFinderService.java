@@ -9,39 +9,48 @@ import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class PlaneFinderService {
-    private final PlaneRepository repo;
     private URL acURL;
     private final ObjectMapper om;
+    private final List<Aircraft> acList;
 
     @SneakyThrows
-    public PlaneFinderService(PlaneRepository repo) {
-        this.repo = repo;
-
+    public PlaneFinderService() {
         acURL = new URL("http://192.168.1.193/ajax/aircraft");
         om = new ObjectMapper();
+        acList = new ArrayList<>();
     }
 
-//    public Iterable<Aircraft> getAircraft() throws IOException {
-    public Flux<Aircraft> getAircraft() throws IOException {
-        repo.deleteAll();
+    public Flux<Aircraft> getAircraft() {
+        JsonNode aircraftNodes = null;
+        try {
+            aircraftNodes = om.readTree(acURL)
+                    .get("aircraft");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        JsonNode aircraftNodes = om.readTree(acURL)
-                .get("aircraft");
+        acList.clear();
+        if (null != aircraftNodes) {
+            aircraftNodes.iterator()
+                    .forEachRemaining(this::saveAircraft);
 
-        aircraftNodes.iterator()
-                .forEachRemaining(this::saveAircraft);
-
-        return repo.findAll();
+            return Flux.fromIterable(acList);
+        } else {
+            //return Flux.just(new Aircraft());
+            return Flux.empty();
+        }
     }
 
     private void saveAircraft(JsonNode node) {
         Aircraft ac = null;
         try {
             ac = om.treeToValue(node, Aircraft.class);
-            repo.save(ac);
+            acList.add(ac);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
