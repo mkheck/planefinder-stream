@@ -57,7 +57,7 @@ public class PlaneFinderService {
         }
 
         acList.clear();
-        if (null != aircraftNodes) {
+        if (null != aircraftNodes && aircraftNodes.size() > 0) {
             aircraftNodes.iterator()
                     .forEachRemaining(this::saveAircraft);
 
@@ -67,7 +67,6 @@ public class PlaneFinderService {
             return Flux.just(new Aircraft("SAL001", "N12345", "SAL001", "LJ",
             30000, 30, 300,
             38.7209228, -90.4107416));
-            //return Flux.empty();
         }
     }
 
