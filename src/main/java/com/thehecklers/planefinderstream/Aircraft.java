@@ -51,4 +51,19 @@ public class Aircraft {
     public void setBds40SeenTime(long bds40SeenTime) {
         this.bds40SeenTime = Instant.ofEpochSecond(bds40SeenTime);
     }
+
+    // For generation of demo data when no aircraft are within range
+    public Aircraft(String callsign, String reg, String flightno, String type,
+                    int altitude, int heading, int speed,
+                    double lat, double lon) {
+        this.callsign = callsign;
+        this.reg = reg;
+        this.flightno = flightno;
+        this.type = type;
+        this.altitude = altitude;
+        this.heading = heading;
+        this.speed = speed;
+        this.lat = lat;
+        this.lon = lon;
+    }
 }

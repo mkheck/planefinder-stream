@@ -25,7 +25,29 @@ public class PlaneFinderService {
         acList = new ArrayList<>();
     }
 
-    public Flux<Aircraft> getAircraft() {
+    // MH: refactor getAircraftXXXX()
+    public List<Aircraft> getAircraftList() {
+        JsonNode aircraftNodes = null;
+        try {
+            aircraftNodes = om.readTree(acURL)
+                    .get("aircraft");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        acList.clear();
+        if (null != aircraftNodes) {
+            aircraftNodes.iterator()
+                    .forEachRemaining(this::saveAircraft);
+
+            return acList;
+        } else {
+            //return Flux.just(new Aircraft());
+            return List.of();
+        }
+    }
+
+    public Flux<Aircraft> getAircraftFlux() {
         JsonNode aircraftNodes = null;
         try {
             aircraftNodes = om.readTree(acURL)
@@ -41,8 +63,11 @@ public class PlaneFinderService {
 
             return Flux.fromIterable(acList);
         } else {
-            //return Flux.just(new Aircraft());
-            return Flux.empty();
+            // Sample data: Spring Airlines flight 001
+            return Flux.just(new Aircraft("SAL001", "N12345", "SAL001", "LJ",
+            30000, 30, 300,
+            38.7209228, -90.4107416));
+            //return Flux.empty();
         }
     }
 

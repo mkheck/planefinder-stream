@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
 
 @Controller
 public class PlaneController {
@@ -20,23 +21,36 @@ public class PlaneController {
     }
 
     @ResponseBody
-    @GetMapping(value = "/aircraft")
-    public Flux<Aircraft> getCurrentAircraft() throws IOException {
-        return pfService.getAircraft();
+    @GetMapping("/aircraftlist")
+    public List<Aircraft> getCurrentAircraftList() {
+        return pfService.getAircraftList();
+    }
+
+    @ResponseBody
+    @GetMapping("/aircraft")
+    public Flux<Aircraft> getCurrentAircraftFlux() throws IOException {
+        return pfService.getAircraftFlux().log();
     }
 
     @ResponseBody
     @GetMapping(value = "/aircraftstream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<Aircraft> getCurrentAircraftStream() throws IOException {
-        return pfService.getAircraft().concatWith(
+        return pfService.getAircraftFlux().concatWith(
                 Flux.interval(Duration.ofSeconds(1))
-                        .flatMap(l -> pfService.getAircraft()));
+                        .flatMap(l -> pfService.getAircraftFlux()));
     }
 
     @MessageMapping("pingpong")
-    Mono<Pong> pingPong(Ping ping) {
+    public Mono<Pong> pingPong(Ping ping) {
         System.out.println("    >>> Incoming.");
         return Mono.just(new Pong(ping.getRequest() + " pong!"));
+    }
+
+    @MessageMapping("acstream")
+    public Flux<Aircraft> getCurrentACStream() throws IOException {
+        return pfService.getAircraftFlux().concatWith(
+                Flux.interval(Duration.ofSeconds(1))
+                        .flatMap(l -> pfService.getAircraftFlux()));
     }
 }
 
